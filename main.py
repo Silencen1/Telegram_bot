@@ -1,6 +1,8 @@
 import logging
 import asyncio
 import json
+import os
+
 
 from telegram import ReplyKeyboardMarkup, InlineKeyboardButton, InlineKeyboardMarkup, Update
 from telegram.ext import Application, CommandHandler, MessageHandler, CallbackQueryHandler, filters, ContextTypes
@@ -11,7 +13,7 @@ logging.basicConfig(
     level=logging.INFO,
 )
 logger = logging.getLogger(__name__)
-
+token = os.getenv("TOKEN")
 # Fayldan o'qish/yozish funksiyalari
 VERIFIED_FILE = 'verified_users.json'
 
@@ -278,8 +280,7 @@ async def error_handler(update: object, context: ContextTypes.DEFAULT_TYPE) -> N
 
 
 def main() -> None:
-    token = '7877980156:AAGq5jHRkTIqBoLNDOwTaYxoibjPGxdXrLo'
-    app = Application.builder().token(token).build()
+    app = Application.builder().token(TOKEN).build()
 
     app.add_handler(CommandHandler('start', start))
     app.add_handler(CommandHandler('help', help_command))
@@ -301,4 +302,7 @@ if __name__ == '__main__':
     # ("https://i.ibb.co/stDkGPs/image.png", "https://i.ibb.co/stDkGPs/image.png"),
    #  ("https://i.ibb.co/GR45jFN/image.png", "https://i.ibb.co/GR45jFN/image.png"),
     # ("https://i.ibb.co/ZVCLPJY/image.png", "https://i.ibb.co/ZVCLPJY/image.png"),
-# 7877980156:AAGq5jHRkTIqBoLNDOwTaYxoibjPGxdXrLo
+
+# git add requirements.txt
+# git commit -m "Initial commit"
+# git push
