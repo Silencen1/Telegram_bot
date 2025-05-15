@@ -160,45 +160,43 @@ async def handle_choice(update: Update, context: ContextTypes.DEFAULT_TYPE) -> N
         await update.message.reply_text("Noma'lum variant. Qayta urinib ko'ring.")
 
 async def check_subscription(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    global env_user_verified
-
     query = update.callback_query
+    logger.info(f"🔔 callback_query.data: {query.data}")
     await query.answer()
 
     if query.data.startswith('check_subscription:'):
         _, choice = query.data.split(':', 1)
 
-        unsubscribed_channels = []
+        not_subscribed_channels = []
+
         for channel in REQUIRED_CHANNELS:
             try:
                 member = await context.bot.get_chat_member(chat_id=channel, user_id=query.from_user.id)
-                is_sub = member.status in ['member', 'administrator', 'creator']
-                if not is_sub:
-                    unsubscribed_channels.append(channel)
-            except Exception:
-                unsubscribed_channels.append(channel)
+                if member.status not in ['member', 'administrator', 'creator']:
+                    not_subscribed_channels.append(channel)
+                    logger.info(f"❌ {query.from_user.id} is NOT subscribed to {channel}")
+                else:
+                    logger.info(f"✅ {query.from_user.id} is subscribed to {channel}")
+            except Exception as e:
+                logger.error(f"⚠️ Error checking {channel}: {e}")
+                not_subscribed_channels.append(channel)
 
-        if query.from_user.id in env_user_verified and unsubscribed_channels:
-            env_user_verified.remove(query.from_user.id)
-            save_verified(env_user_verified)
-            logger.info(f"❌ {query.from_user.id} ro'yxatdan olib tashlandi (kanaldan chiqib ketgan)")
-
-        if not unsubscribed_channels:
+        if not not_subscribed_channels:
             if query.from_user.id not in env_user_verified:
                 env_user_verified.add(query.from_user.id)
                 save_verified(env_user_verified)
-                logger.info(f"➕ {query.from_user.id} ro'yxatga qo‘shildi")
-            await query.message.reply_text("✅ Muvaffaqiyatli obuna bo‘ldingiz!")
+                logger.info(f"➕ Added {query.from_user.id} to verified list")
+
+            await query.message.reply_text('✅ Muvaffaqiyatli obuna bo‘ldingiz!')
             await send_media(context, query.from_user.id, choice)
         else:
-            logger.info(f"🚫 Foydalanuvchi quyidagi kanallarga obuna emas: {unsubscribed_channels}")
-            buttons = [
-                [InlineKeyboardButton("Obuna bo‘lish", url=f'https://t.me/{ch[1:]}')] for ch in unsubscribed_channels
-            ]
-            buttons.append([InlineKeyboardButton("✅ Obuna bo‘ldim", callback_data=f'check_subscription:{choice}')])
+            # Faqat obuna bo'lmagan kanallarni chiqaring
+            buttons = [[InlineKeyboardButton('Obuna bo‘lish', url=f'https://t.me/{ch[1:]}')] for ch in not_subscribed_channels]
+            buttons.append([InlineKeyboardButton('✅ Obuna bo‘ldim', callback_data=f'check_subscription:{choice}')])
             reply_markup = InlineKeyboardMarkup(buttons)
+
             await query.message.reply_text(
-                'Iltimos, quyidagi kanal(lar)ga obuna bo‘ling va "✅ Obuna bo‘ldim" tugmasini bosing:',
+                '🚫 Siz quyidagi kanallarga obuna bo‘lmagansiz. Iltimos, obuna bo‘lib, "✅ Obuna bo‘ldim" tugmasini bosing:',
                 reply_markup=reply_markup
             )
 
@@ -242,3 +240,4 @@ if __name__ == '__main__':
 # git add requirements.txt
 # git commit -m "Initial commit"
 # git push
+
