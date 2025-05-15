@@ -53,7 +53,7 @@ MEDIA_MAP = {
         'https://i.imgur.com/MyyAgmt.png',
         'https://i.imgur.com/HtOztrQ.png',
         'https://i.imgur.com/avU3cY9.png',
-        ''
+
 
     ],
     'Manchestr City': [
@@ -86,7 +86,7 @@ MEDIA_MAP = {
         'https://dlsgame.net/wp-content/uploads/2025/04/Barcelona-Away-Kit-2005-06-DLS-25.png',
         'https://kitdls.net/wp-content/uploads/2024/05/DLS-24-Barcelona-Home-Kit-V2-2024-2025.png',
         'https://kitdls.net/wp-content/uploads/2024/07/Barcelona-Home-Kit-2024-2025-DLS-24.png',
-        'https://kitdls.net/wp-content/uploads/2024/07/Barcelona-Away-Kit-2024-2025-DLS-24.png',
+        'https://kitdls.net/wp-content/uploads/2024/07/Barcelona-Away-Kit-2024-2025-DLS-24.png'
 
         ],
      'Manchestr United': [
